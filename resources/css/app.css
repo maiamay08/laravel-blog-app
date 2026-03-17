@@ -1,0 +1,56 @@
+@import "tailwindcss";
+/* Tell Tailwind to look at the Laravel pagination blade files */
+@source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
+
+@layer components {
+    nav {
+        @apply max-w-screen-lg mx-auto flex items-center justify-between p-2;
+    }
+
+    .nav-link {
+        @apply font-medium text-neutral-900 active:text-sky-500 hover:bg-slate-100/10 justify-end rounded-md p-2;
+    }
+
+    .auth-title {
+        @apply text-3xl font-bold text-gray-950 justify-self-center my-2;
+    }
+
+    .title{
+        @apply text-3xl font-bold text-gray-950 my-10;
+    }
+
+    .subtitle {
+        @apply text-2xl font-semibold text-gray-900 my-4;
+    }
+    .card {
+        @apply bg-white rounded-lg shadow-lg p-6 my-3;
+    }
+
+    .btn-primary {
+        @apply block font-medium text-center bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600;
+    }
+
+    label {
+        @apply block font-medium mb-2;
+    }
+
+    input, textarea {
+        @apply w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500;
+    }
+
+    .error {
+        @apply text-red-500 text-sm mt-1;
+    }
+
+    .round-btn {
+        @apply bg-slate-100 rounded-full focus:outline-none focus:ring-1 ring-slate-100;
+    }
+
+    .flash-success {
+        @apply text-green-500 py-2 rounded mb-4;
+    }
+
+    .flash-fail {
+        @apply text-red-500 py-2 rounded mb-4;
+    }
+}
