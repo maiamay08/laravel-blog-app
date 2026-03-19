@@ -69,10 +69,15 @@
                 <div class="flex gap-4">
                     <a href="{{ route('posts.edit', $post) }}" class="text-green-500 hover:text-green-700">Update</a>
 
-                    <form action="{{ route('posts.destroy', $post) }}" method="post">
+                    <div class="delete-modal-container" 
+                        data-post-id="{{ $post->id }}" 
+                        data-post-title="{{ $post->title }}">
+                    </div>
+
+                    <form id="delete-form-{{ $post->id }}" action="{{ route('posts.destroy', $post) }}" method="post" class="hidden">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
+                        
                     </form>
 
                 </div>
