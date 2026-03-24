@@ -4,6 +4,7 @@ use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', 'posts');
@@ -11,6 +12,11 @@ Route::redirect('/', 'posts');
 Route::resource('posts', PostController::class);
 
 Route::get('/{user}/posts', [DashboardController::class, 'userPosts'])->name('posts.user');
+
+Route::middleware(['auth', 'can:admin-access'])->prefix('admin')->group(function(){
+    Route::get('/admin-dashboard', [AdminController::class, 'index'])->name('admin.admin-dashboard');
+});
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('verified')->name('dashboard');

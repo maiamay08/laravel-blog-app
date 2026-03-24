@@ -65,7 +65,7 @@ class PostController extends Controller implements HasMiddleware
         $post = auth()->user()->posts()->create([...$validatedData, 'image' => $path]);
 
         //Sent email
-        Mail::to(auth()->user())->send(new WelcomeMail(auth()->user(), $post));
+        //Mail::to(auth()->user())->send(new WelcomeMail(auth()->user(), $post));
 
         // Redirect to the home page or any other page
         return back()->with('success', 'Post created successfully!');

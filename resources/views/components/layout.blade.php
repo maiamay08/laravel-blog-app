@@ -18,22 +18,13 @@
                         data-username="{{ Auth::user()->username }}" 
                         data-avatar="https://i.redd.it/frieren-icons-to-admire-its-beauty-v0-haeexg50fajd1.jpg?width=701&format=pjpg&auto=webp&s=c009f137038ff30e2ff1cf4106e8b22bb8466074"
                         data-dashboard="{{ route('dashboard') }}"
+                        data-admin-dashboard="{{ route('admin.admin-dashboard') }}"
+                        data-is-admin="{{ Auth::user()->is_admin ? 'true' : 'false' }}"
                         >
                     </div>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
                     @csrf
                 </form>
-
-                {{--
-                    <div class="relative grid place-items-center">
-
-                        <div class="bg-white shadow-lg absolute top-12 right-0 rounded-lg overflow-hidden font-light">
-
-                            
-                        </div>
-                    </div>
-                --}}
-                
             @endauth
 
             @guest

@@ -2,18 +2,18 @@
 
     <h1 class="title">Hello, {{ Auth::user()->username }}!</h1>
     
-    @if (session('success'))
-        <div class="mb-2">
-            <x-flashmsg msg="{{ session('success') }}" bg="flash-success"/>
-        </div>
-    @elseif (session('delete'))
-        <div class="mb-2">
-            <x-flashmsg msg="{{ session('delete') }}" bg="flash-fail"/>
+    @php
+        $message = session('success') ?? session('delete');
+        $variant = session('success') ? 'success' : (session('delete') ? 'error' : null);
+    @endphp
+
+    @if ($message)
+        <div class="toast-notification"
+            data-message="{{ $message }}"
+            data-variant="{{ $variant }}">
         </div>
     @endif
 
-
-    
     {{--create post form--}}
 
     <div class="mx-auto card">

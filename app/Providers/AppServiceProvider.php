@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+use App\Models\User;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -22,6 +24,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::define('admin-access', function(User $user){
+            return $user->email === 'admin@email.com';
+        });
         
         VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
         return (new MailMessage)

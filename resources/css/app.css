@@ -46,11 +46,4 @@
         @apply bg-slate-100 rounded-full focus:outline-none focus:ring-1 ring-slate-100;
     }
 
-    .flash-success {
-        @apply text-green-500 py-2 rounded mb-4;
-    }
-
-    .flash-fail {
-        @apply text-red-500 py-2 rounded mb-4;
-    }
 }

@@ -2,24 +2,41 @@ import './bootstrap';
 import { createRoot } from 'react-dom/client';
 import DeleteModal from './components/deleteModal';
 import ProfileMenu from './components/profileMenu';
+import ToastNotification from './components/toast';
 
 const deleteContainers = document.querySelectorAll('.delete-modal-container');
 const profileMenus = document.querySelectorAll('.profile-dropdown-container');
+const toastNotification = document.querySelectorAll('.toast-notification');
 
 deleteContainers.forEach(el => {
     const postId = el.dataset.postId;
     const postTitle = el.dataset.postTitle;
 
     createRoot(el).render (
-        <DeleteModal postId={postId} postTitle={postTitle}/>
+        <DeleteModal 
+            postId={postId} 
+            postTitle={postTitle}/>
     );
 });
 
 profileMenus.forEach(el => {
-    const { username, avatar, dashboardUrl } = el.dataset;
+    const { username, avatar, dashboard, adminDashboard, isAdmin } = el.dataset;
 
     createRoot(el).render (
-        <ProfileMenu username={username} avatar={avatar} dashboardUrl={dashboardUrl}/>
+        <ProfileMenu 
+            username={username} 
+            avatar={avatar} 
+            dashboardUrl={dashboard}
+            adminDashboardUrl={adminDashboard}
+            isAdmin={isAdmin === 'true'}/>
+    );
+});
+
+toastNotification.forEach(el => {
+    const { message, variant } = el.dataset;
+
+    createRoot(el).render (
+        <ToastNotification message={message} variant={variant}/>
     );
 });
 
