@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define('admin-access', function(User $user){
-            return $user->email === 'admin@email.com';
+            return $user->is_admin;
         });
         
         VerifyEmail::toMailUsing(function (object $notifiable, string $url) {

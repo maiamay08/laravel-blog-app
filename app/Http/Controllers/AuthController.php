@@ -13,7 +13,6 @@ class AuthController extends Controller
 {
     public function signup(Request $request)
     {
-
         // Validate the incoming request data
         $validatedData = $request->validate([
             'username' => ['required', 'string', 'max:255'],
@@ -33,9 +32,7 @@ class AuthController extends Controller
             event(new UserSubscribed($user));
         };
 
-        // Redirect to the home page or any other page
-        return redirect()->route('dashboard');
-
+        
     }
 
     public function verifyNotice () {
@@ -46,6 +43,10 @@ class AuthController extends Controller
     public function verifyEmail (EmailVerificationRequest $request) {
        
         $request->fulfill();
+
+        if (auth()->user()->is_admin) {
+                return redirect()->route('admin.admin-dashboard');
+        }
 
         return redirect()->route('dashboard');
     }
@@ -66,8 +67,15 @@ class AuthController extends Controller
 
         // Attempt to log the user in using the validated data
         if (auth()->attempt($validatedData)) {
+            $user = auth()->user();
+
+            if ($user->is_admin) {
+                return redirect()->intended('/admin/admin-dashboard');
+            }
+            else {
             // If successful, redirect to the home page or any other page
-            return redirect()->intended('dashboard');   
+                return redirect()->intended('dashboard');
+            } 
         } 
         else {
         // If login fails, redirect back with an error message

@@ -16,14 +16,31 @@
     }
 
     .title{
-        @apply text-3xl font-bold text-gray-950 my-10;
+        @apply text-3xl font-bold text-gray-950 m-2 py-2;
+    }
+
+    .card-title {
+        @apply text-xl font-bold text-gray-950 text-center my-2;
+    }
+
+    .card-count {
+        @apply text-3xl font-bold text-gray-950 text-center p-4;
     }
 
     .subtitle {
         @apply text-2xl font-semibold text-gray-900 my-4;
     }
+
     .card {
         @apply bg-white rounded-lg shadow-lg p-6 my-3;
+    }
+
+    .admin-card {
+        @apply bg-white rounded-lg shadow-lg p-6 m-2 w-64 h-50 border-4 border-sky-200
+    }
+
+    .mini-card {
+        @apply bg-sky-100 rounded-sm m-2 w-50 h-25
     }
 
     .btn-primary {

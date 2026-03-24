@@ -9,7 +9,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.jsx'])
 </head>
 <body class="bg-blue-50">
-    <header class="bg-cyan-100 shadow-lg">
+    <header class="bg-sky-100 shadow-lg">
         <nav>
             <a href="{{ route('posts.index') }}" class="nav-link">Home</a>
 

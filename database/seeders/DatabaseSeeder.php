@@ -16,6 +16,13 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        Post::factory(20)->create();
+       User::factory(5)->hasPosts(3)->create();
+
+       User::factory()->create([
+            'username' => 'admin',
+            'email' => 'admin@email.com',
+            'password' => bcrypt('123123123'),
+            'is_admin' => true, // Assuming you added this column earlier
+        ]);
     }
 }

@@ -3,10 +3,12 @@ import { createRoot } from 'react-dom/client';
 import DeleteModal from './components/deleteModal';
 import ProfileMenu from './components/profileMenu';
 import ToastNotification from './components/toast';
+import AdminTabs from './components/adminTabs';
 
 const deleteContainers = document.querySelectorAll('.delete-modal-container');
 const profileMenus = document.querySelectorAll('.profile-dropdown-container');
 const toastNotification = document.querySelectorAll('.toast-notification');
+const adminTabs = document.getElementById('admin-tabs')
 
 deleteContainers.forEach(el => {
     const postId = el.dataset.postId;
@@ -40,3 +42,7 @@ toastNotification.forEach(el => {
     );
 });
 
+
+if (adminTabs) {
+    createRoot(adminTabs).render(<AdminTabs/>);
+}
