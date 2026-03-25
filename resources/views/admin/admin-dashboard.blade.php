@@ -22,7 +22,8 @@
         </div>
     </div>
 
-    <div>
-        <div id="admin-tabs"></div>
+    <div id="admin-tabs"
+        data-users="{{ json_encode($users) }}"
+        data-posts="{{ json_encode($posts) }}">
     </div>
 </x-layout>

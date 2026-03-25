@@ -15,6 +15,8 @@ class AdminController extends Controller
             'postCount' => Post::count(),
             'userCount' => User::count(),
             'subscriberCount' => Subscriber::count(),
+            'users' => User::get(),
+            'posts' => Post::with('user')->latest()->get(),
         ]);
     }
 }

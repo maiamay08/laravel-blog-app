@@ -44,5 +44,10 @@ toastNotification.forEach(el => {
 
 
 if (adminTabs) {
-    createRoot(adminTabs).render(<AdminTabs/>);
+    const users = adminTabs.dataset.users;
+    const posts = adminTabs.dataset.posts;
+
+    createRoot(adminTabs).render(
+        <AdminTabs users={users} posts={posts} />
+    );
 }

@@ -63,8 +63,9 @@
 
     <h2 class="subtitle my-5">Your Latest Posts</h2>
 
-    <div class="grid grid-cols-2 gap-4 items-start">
+    <div class="columns-1 md:columns-2 gap-4 space-y-4 mb-5">
       @foreach ($posts as $post)
+        <div class="break-inside-avoid">
             <x-postcard :post="$post">
                 <div class="flex gap-4">
                     <a href="{{ route('posts.edit', $post) }}" class="text-green-500 hover:text-green-700">Update</a>
@@ -82,6 +83,8 @@
 
                 </div>
             </x-postcard>
+        </div>
+            
       @endforeach
     </div>
 
