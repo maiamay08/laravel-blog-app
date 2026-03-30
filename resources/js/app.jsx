@@ -1,5 +1,6 @@
 import './bootstrap';
 import { createRoot } from 'react-dom/client';
+import '../css/app.css';
 import DeleteModal from './components/deleteModal';
 import ProfileMenu from './components/profileMenu';
 import ToastNotification from './components/toast';
@@ -46,8 +47,9 @@ toastNotification.forEach(el => {
 if (adminTabs) {
     const users = adminTabs.dataset.users;
     const posts = adminTabs.dataset.posts;
+    const trash = adminTabs.dataset.trash;
 
     createRoot(adminTabs).render(
-        <AdminTabs users={users} posts={posts} />
+        <AdminTabs users={users} posts={posts} trash={trash}/>
     );
 }

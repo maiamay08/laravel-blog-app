@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{env('APP_NAME')}}</title>
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/app.jsx'])
+
 </head>
 <body class="bg-blue-50">
+
     <header class="bg-sky-100 shadow-lg">
         <nav>
             <a href="{{ route('posts.index') }}" class="nav-link">Home</a>
@@ -38,7 +41,7 @@
     </header>
     
     <main class="p-5 max-w-screen-lg mx-auto">
-        {{$slot}}
+       {{$slot}} 
     </main>
 </body>
 </html>

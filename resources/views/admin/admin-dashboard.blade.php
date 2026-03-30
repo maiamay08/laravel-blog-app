@@ -24,6 +24,7 @@
 
     <div id="admin-tabs"
         data-users="{{ json_encode($users) }}"
-        data-posts="{{ json_encode($posts) }}">
+        data-posts="{{ json_encode($posts) }}"
+        data-trash="{{ json_encode($trash) }}">
     </div>
 </x-layout>

@@ -1,21 +1,37 @@
 import * as Tabs from '@radix-ui/react-tabs';
+import { useState } from 'react';
+import TrashModal from './trashModal';
+import ConfirmationModal from './confirmationModal';
 
-const UserTable = ({ headers, data, type }) => (
+const UserTable = ({ headers, data, type, onOpenTrash, onDelete }) => (
     <div>
-        <table className="w-full bg-white rounded-md table-auto md:table-fixed border-collapse border border-sky-300">
+        <div className="flex flex-row justify-between mb-2 items-center">      
+            <h1 className="title">Active Users</h1>
+            <button onClick={onOpenTrash} className="block font-medium text-center bg-sky-500 text-white px-1 py-2 w-20 h-10 rounded hover:bg-sky-600 focus:bg-sky-700">Trash</button>
+        </div>
+        
+        <table className="w-full bg-white rounded-md table-fixed border-collapse border border-sky-300">
             <thead className="bg-sky-100">
                 <tr className="border border-sky-200 font-medium text-lg">
                     {headers.map(h => <th className="p-2 text-center" key={h}>{h}</th>)}
+                    <th className="p-2 text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {data.map((items) => 
-                    <tr className="border border-sky-200 ">
-                        <td className="border border-sky-200 p-2 font-medium text-center">
-                            {type === 'users' ? items.username : items.email}
+                    <tr key={items.id} className="border border-sky-200 ">
+                        <td className="border border-sky-200 font-medium text-center">
+                            {items.id}
                         </td>
                         <td className="border border-sky-200 text-center">
-                            {type === 'users' ? items.email : 'N/A'}
+                            {items.username}
+                        </td>
+                        <td className="border border-sky-200 text-center">
+                            {items.email}
+                        </td>
+                        <td className="py-4 px-4 text-center">
+                            <button className="text-green-500 hover:text-green-700 mr-3">Edit</button>
+                            <button onClick={() => onDelete(items.id)} className="text-red-500 hover:text-red-700">Delete</button>
                         </td>
                     </tr>
                 )}
@@ -64,11 +80,54 @@ const PostCards = ({ post }) => {
 };
 
 
-export default function AdminTabs ({ users, posts}) {
+
+export default function AdminTabs ({ users, posts, trash }) {
     const userData = users ? JSON.parse(users) : [];
     const postData = posts ? JSON.parse(posts) : [];
+    const trashData = trash ? JSON.parse(trash) : [];
+    const [isTrashOpen, setIsTrashOpen] = useState(false);
+
+    const handleSoftDelete = (id) => {
+        triggerConfirm (
+            "Move to Trash?",
+            "This user will be moved to the trash and can be restored later.", () => {
+
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/admin/users/${id}`;
+
+                const methodInput = document.createElement('input');
+                methodInput.type = 'hidden';
+                methodInput.name = '_method';
+                methodInput.value = 'DELETE';
+
+                const tokenInput = document.createElement('input');
+                tokenInput.type = 'hidden';
+                tokenInput.name = '_token';
+                tokenInput.value = document.querySelector('meta[name="csrf-token"]').content;
+
+                form.appendChild(methodInput);
+                form.appendChild(tokenInput);
+                document.body.appendChild(form);
+                form.submit();
+        });
+    };
+
+    const [confirmConfig, setConfirmConfig] = useState({ 
+        isOpen: false, 
+        title: '', 
+        message: '', 
+        onConfirm: () => {}, 
+        type: 'danger' 
+    });
+
+    const triggerConfirm = (title, message, onConfirm, type = 'danger') => {
+        setConfirmConfig({ isOpen: true, title, message, onConfirm, type });
+    };
+
 
     return (
+        <div>
         <Tabs.Root className="w-full mt-6" defaultValue="users">
             <Tabs.List className="flex border-b border-slate-200 bg-slate-50/50">
                 <Tabs.Trigger 
@@ -85,9 +144,16 @@ export default function AdminTabs ({ users, posts}) {
             
             <Tabs.Content value="users" className="animate-in fade-in duration-5000">
                 <div className="py-6">
-                    <UserTable headers={[ 'Username', 'Email' ]} data={userData} type="users"/>
+                    <UserTable headers={[ 'Id', 'Username', 'Email' ]} data={userData} type="users" onOpenTrash={() => setIsTrashOpen(true)} onDelete={handleSoftDelete}/>
+                    <TrashModal 
+                        isOpen={isTrashOpen} 
+                        onClose={() => setIsTrashOpen(false)} 
+                        data={trashData}
+                    />
                 </div>
+                
             </Tabs.Content>
+
             <Tabs.Content value="posts" className="animate-in fade-in duration-5000">
                 <div className="columns-1 md:columns-2 gap-4 space-y-4 py-6">
                     {postData.map(post => (
@@ -97,6 +163,16 @@ export default function AdminTabs ({ users, posts}) {
                     ))}
                 </div>
             </Tabs.Content>
+            
         </Tabs.Root>
+        <ConfirmationModal
+                isOpen={confirmConfig.isOpen}
+                title={confirmConfig.title}
+                message={confirmConfig.message}
+                onConfirm={confirmConfig.onConfirm}
+                type={confirmConfig.type}
+                onClose={() => setConfirmConfig({ ...confirmConfig, isOpen: false })}
+        />
+    </div>
     );
 }

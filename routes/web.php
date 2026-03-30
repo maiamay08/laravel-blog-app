@@ -15,6 +15,11 @@ Route::get('/{user}/posts', [DashboardController::class, 'userPosts'])->name('po
 
 Route::middleware(['auth', 'can:admin-access'])->prefix('admin')->group(function(){
     Route::get('/admin-dashboard', [AdminController::class, 'index'])->name('admin.admin-dashboard');
+
+    Route::delete('/users/{user}', [AdminController::class, 'trash'])->name('admin.users.trash');
+    Route::delete('/users/{user}/force', [AdminController::class, 'permanentlyDelete'])->withTrashed()->name('admin.users.forceDelete');
+
+    Route::post('/users/{user}/restore', [AdminController::class, 'restore'])->withTrashed()->name('admin.users.restore');
 });
 
 
