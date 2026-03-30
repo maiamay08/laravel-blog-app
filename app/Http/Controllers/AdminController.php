@@ -21,7 +21,6 @@ class AdminController extends Controller
             'trash' => User::onlyTrashed()->get(),
         ]);
 
-        
     }
 
     public function trash(User $user){
@@ -39,5 +38,19 @@ class AdminController extends Controller
         $user = User::withTrashed()->findOrFail($id);
         $user->restore();
         return back()->with('message', 'User restored.');
+    }
+
+    public function update(Request $request, User $user)
+    {
+
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'username' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+        ]);
+
+        $user->update($validatedData);
+
+        return back()->with('success', 'User updated successfully!');
     }
 }

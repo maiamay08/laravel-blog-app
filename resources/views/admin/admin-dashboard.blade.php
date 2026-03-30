@@ -22,9 +22,17 @@
         </div>
     </div>
 
+    @php
+        $flash = [
+            'success' => session('success'),
+            'error'=> session('error')
+        ]
+    @endphp
+
     <div id="admin-tabs"
         data-users="{{ json_encode($users) }}"
         data-posts="{{ json_encode($posts) }}"
-        data-trash="{{ json_encode($trash) }}">
+        data-trash="{{ json_encode($trash) }}"
+        data-flash="{{ json_encode($flash) }}">
     </div>
 </x-layout>

@@ -2,7 +2,11 @@ import * as Toast from '@radix-ui/react-toast';
 import { useState } from 'react';
 
 export default function ToastNotification({ message, variant }){
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(!!message);
+
+    if (!message) {
+        return null;
+    }
 
     const styles = variant === 'success'
         ? 'text-emerald-900 border-emerald-500' 

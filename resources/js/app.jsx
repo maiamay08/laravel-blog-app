@@ -48,8 +48,9 @@ if (adminTabs) {
     const users = adminTabs.dataset.users;
     const posts = adminTabs.dataset.posts;
     const trash = adminTabs.dataset.trash;
+    const flash = adminTabs.dataset.flash;
 
     createRoot(adminTabs).render(
-        <AdminTabs users={users} posts={posts} trash={trash}/>
+        <AdminTabs users={users} posts={posts} trash={trash} flash={flash ? JSON.parse(flash) : {}}/>
     );
 }

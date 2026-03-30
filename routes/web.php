@@ -20,7 +20,9 @@ Route::middleware(['auth', 'can:admin-access'])->prefix('admin')->group(function
     Route::delete('/users/{user}/force', [AdminController::class, 'permanentlyDelete'])->withTrashed()->name('admin.users.forceDelete');
 
     Route::post('/users/{user}/restore', [AdminController::class, 'restore'])->withTrashed()->name('admin.users.restore');
-});
+    Route::patch('/users/{user}', [AdminController::class, 'update'])->name('admin.users.update');
+
+    });
 
 
 Route::middleware('auth')->group(function () {

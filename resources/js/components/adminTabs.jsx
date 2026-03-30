@@ -1,44 +1,124 @@
 import * as Tabs from '@radix-ui/react-tabs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TrashModal from './trashModal';
 import ConfirmationModal from './confirmationModal';
+import ToastNotification from './toast';
 
-const UserTable = ({ headers, data, type, onOpenTrash, onDelete }) => (
-    <div>
-        <div className="flex flex-row justify-between mb-2 items-center">      
-            <h1 className="title">Active Users</h1>
-            <button onClick={onOpenTrash} className="block font-medium text-center bg-sky-500 text-white px-1 py-2 w-20 h-10 rounded hover:bg-sky-600 focus:bg-sky-700">Trash</button>
-        </div>
-        
-        <table className="w-full bg-white rounded-md table-fixed border-collapse border border-sky-300">
-            <thead className="bg-sky-100">
-                <tr className="border border-sky-200 font-medium text-lg">
-                    {headers.map(h => <th className="p-2 text-center" key={h}>{h}</th>)}
-                    <th className="p-2 text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {data.map((items) => 
-                    <tr key={items.id} className="border border-sky-200 ">
-                        <td className="border border-sky-200 font-medium text-center">
-                            {items.id}
-                        </td>
-                        <td className="border border-sky-200 text-center">
-                            {items.username}
-                        </td>
-                        <td className="border border-sky-200 text-center">
-                            {items.email}
-                        </td>
-                        <td className="py-4 px-4 text-center">
-                            <button className="text-green-500 hover:text-green-700 mr-3">Edit</button>
-                            <button onClick={() => onDelete(items.id)} className="text-red-500 hover:text-red-700">Delete</button>
-                        </td>
+const UserTable = ({ headers, data, onOpenTrash, onDelete, flash }) => {
+    const [editingId, setEditingId] = useState(null);
+    const [editForm, setEditForm] = useState({ username: '', email: '' });
+
+    const handleEdit = (items) => {
+        setEditForm({ username: items.username, email: items.email });
+        setEditingId(items.id);
+    }
+
+    const handleCancel = () => {
+        setEditingId(null);
+        setEditForm({ username: '', email: '' });
+    }
+
+    const handleSave = (id) => {
+        console.log('Saving:', id, editForm);
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/users/${id}`;
+
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'PATCH';
+
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = '_token';
+        tokenInput.value = document.querySelector('meta[name="csrf-token"]').content;
+
+        const usernameInput = document.createElement('input');
+        usernameInput.type = 'hidden';
+        usernameInput.name = 'username';
+        usernameInput.value = editForm.username;
+
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = editForm.email;
+
+        form.appendChild(methodInput);
+        form.appendChild(tokenInput);
+        form.appendChild(usernameInput);
+        form.appendChild(emailInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    return (
+        <div>
+            <div className="flex flex-row justify-between mb-2 items-center">      
+                <h1 className="title">Active Users</h1>
+                <button onClick={onOpenTrash} className="block font-medium text-center bg-sky-500 text-white px-1 py-2 w-20 h-10 rounded hover:bg-sky-600 focus:bg-sky-700">Trash</button>
+            </div>
+            
+            <table className="w-full bg-white rounded-md table-fixed border-collapse border border-sky-300">
+                <thead className="bg-sky-100">
+                    <tr className="border border-sky-200 font-medium text-lg">
+                        {headers.map(h => <th className="p-2 text-center" key={h}>{h}</th>)}
+                        <th className="p-2 text-center">Actions</th>
                     </tr>
-                )}
-            </tbody>
-        </table>
-    </div>
-);
+                </thead>
+                <tbody>
+                    {data.map((items) => 
+                        <tr key={items.id} className="border border-sky-200">
+                            <td className="border border-sky-200 font-medium text-center">
+                                {items.id}
+                            </td>
+                            <td className="border border-sky-200 text-center">
+                                {editingId === items.id ? (
+                                    <input 
+                                        className="w-full bg-transparent text-center px-2 py-1 focus:outline-none border-0 focus:border-sky-600 focus:ring-0"
+                                        type="text"
+                                        value={editForm.username}
+                                        placeholder={items.username}
+                                        onChange={(e) => setEditForm({...editForm, username: e.target.value})}
+                                    />
+                                ) : (
+                                    items.username
+                                )}
+                            </td>
+                            <td className="border border-sky-200 text-center">
+                                {editingId === items.id ? (
+                                    <input 
+                                        className="w-full bg-transparent text-center px-2 py-1 focus:outline-none border-0 focus:border-sky-600 focus:ring-0"
+                                        type="text"
+                                        value={editForm.email}
+                                        placeholder={items.email}
+                                        onChange={(e) => setEditForm({...editForm, email: e.target.value})}
+                                    />
+                                ) : (
+                                    items.email
+                                )}
+                            </td>
+                            <td className="py-4 px-4 text-center">
+                                {editingId === items.id ? (
+                                    <>
+                                        <button onClick={() => handleSave(items.id)} className="text-green-500 hover:text-green-700 mr-3">Save</button>
+                                        <button onClick={() => handleCancel(null)} className="text-red-500 hover:text-red-700 mr-3">Cancel</button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button onClick={() => handleEdit(items)} className="text-green-500 hover:text-green-700 mr-3">Edit</button>
+                                        <button onClick={() => onDelete(items.id)} className="text-red-500 hover:text-red-700 mr-3">Delete</button>
+                                    </>
+                                )}
+                            </td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
+    );
+};
 
 const PostCards = ({ post }) => {
 
@@ -81,7 +161,7 @@ const PostCards = ({ post }) => {
 
 
 
-export default function AdminTabs ({ users, posts, trash }) {
+export default function AdminTabs ({ users, posts, trash , flash}) {
     const userData = users ? JSON.parse(users) : [];
     const postData = posts ? JSON.parse(posts) : [];
     const trashData = trash ? JSON.parse(trash) : [];
@@ -128,6 +208,7 @@ export default function AdminTabs ({ users, posts, trash }) {
 
     return (
         <div>
+        <ToastNotification message={flash?.success} variant="success" />
         <Tabs.Root className="w-full mt-6" defaultValue="users">
             <Tabs.List className="flex border-b border-slate-200 bg-slate-50/50">
                 <Tabs.Trigger 
