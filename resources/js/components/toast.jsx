@@ -1,8 +1,14 @@
 import * as Toast from '@radix-ui/react-toast';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function ToastNotification({ message, variant }){
     const [open, setOpen] = useState(!!message);
+
+    useEffect(() => {
+        if (message) {
+            setOpen(true); 
+        }
+    }, [message]);
 
     if (!message) {
         return null;

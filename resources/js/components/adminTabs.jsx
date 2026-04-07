@@ -120,7 +120,38 @@ const UserTable = ({ headers, data, onOpenTrash, onDelete, flash }) => {
     );
 };
 
-const PostCards = ({ post }) => {
+const PostCards = ({ post, onStatusChange }) => {
+
+    const submitStatusChange = async (action, newStatus) => {
+        const token = document.querySelector('meta[name="csrf-token"]').content;
+
+        try {
+            const response = await fetch(action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token,
+                    'X-HTTP-Method-Override': 'PATCH',
+                },
+                body: JSON.stringify({ _method: 'PATCH' }),
+            });
+
+            if (response.ok) {
+                onStatusChange(post.id, newStatus); 
+            } else {
+                console.error('Failed to update status');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+
+    const statusColors = {
+        pending: 'bg-yellow-100 text-yellow-800',
+        approved: 'bg-green-100 text-green-800',
+        rejected: 'bg-red-100 text-red-800',
+    };
 
     return (
         <div className="card mb-1">
@@ -133,8 +164,13 @@ const PostCards = ({ post }) => {
                         className="w-full h-full object-cover rounded-lg mb-2"/> 
                 </div>
             )}
-
-            <h2 className="font-bold text-xl mb-2">{post.title}</h2>
+            <div className="flex justify-between mb-2 items-center">
+                 <h2 className="font-bold text-xl mb-2">{post.title}</h2>
+                    <span className={`px-2 py-1 rounded-md text-xs font-semibold ${statusColors[post.status]}`}>
+                        {post.status.charAt(0).toUpperCase() + post.status.slice(1)}
+                    </span>
+            </div>
+           
 
             <div className="text-sm text-gray-500">
                 <span>Posted By </span>
@@ -154,6 +190,17 @@ const PostCards = ({ post }) => {
                     <a href={`/posts/${post.id}`} className="flex justify-end text-sky-500 hover:underline">Read More &rarr;</a>
                 </div>
             </div>
+
+            <div>
+                {post.status !== 'approved' && (
+                    <button onClick={() => submitStatusChange(`/admin/posts/${post.id}/approve`, 'approved')} className="text-green-500 hover:text-green-700 mr-3">Approve</button>
+                )}
+                
+                {post.status !== 'rejected' && (
+                    <button onClick={() => submitStatusChange(`/admin/posts/${post.id}/reject`, 'rejected')} className="text-red-500 hover:text-red-700 mr-3">Reject</button>
+                )}
+                
+            </div>
             
         </div>
     )
@@ -163,9 +210,10 @@ const PostCards = ({ post }) => {
 
 export default function AdminTabs ({ users, posts, trash , flash}) {
     const userData = users ? JSON.parse(users) : [];
-    const postData = posts ? JSON.parse(posts) : [];
+    const [postData, setPostData] = useState(posts ? JSON.parse(posts) : []);
     const trashData = trash ? JSON.parse(trash) : [];
     const [isTrashOpen, setIsTrashOpen] = useState(false);
+    const [toast, setToast] = useState({ message: '', variant: '' });
 
     const handleSoftDelete = (id) => {
         triggerConfirm (
@@ -208,7 +256,7 @@ export default function AdminTabs ({ users, posts, trash , flash}) {
 
     return (
         <div>
-        <ToastNotification message={flash?.success} variant="success" />
+        <ToastNotification message={toast.message} variant={toast.variant}/> 
         <Tabs.Root className="w-full mt-6" defaultValue="users">
             <Tabs.List className="flex border-b border-slate-200 bg-slate-50/50">
                 <Tabs.Trigger 
@@ -239,7 +287,13 @@ export default function AdminTabs ({ users, posts, trash , flash}) {
                 <div className="columns-1 md:columns-2 gap-4 space-y-4 py-6">
                     {postData.map(post => (
                         <div key={post.id} className="break-inside-avoid"> 
-                            <PostCards post={post}/>
+                            <PostCards post={post}onStatusChange={(id, status) => {
+                                setPostData(prev => prev.map(p => p.id === id ? {...p, status} : p))
+                                setToast({ // 👈 set toast on status change
+                                    message: `Post ${status === 'approved' ? 'approved' : 'rejected'} successfully!`,
+                                    variant: status === 'approved' ? 'success' : 'error'
+                                });
+                            }}/>
                         </div>
                     ))}
                 </div>

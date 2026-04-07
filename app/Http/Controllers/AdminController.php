@@ -53,4 +53,18 @@ class AdminController extends Controller
 
         return back()->with('success', 'User updated successfully!');
     }
+
+    public function approvePost (Post $post)
+    {
+        $post->update(['status' => 'approved']);
+
+        return response()->json(['success' => 'Post approved!']);
+    }
+
+     public function rejectPost(Post $post)
+    {
+        $post->update(['status' => 'rejected']);
+
+        return response()->json(['success' => 'Post rejected!']);
+    }
 }

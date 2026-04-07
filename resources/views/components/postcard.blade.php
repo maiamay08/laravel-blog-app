@@ -8,7 +8,21 @@
         </div>
     @endif
     
-    <h2 class="font-bold text-xl mb-2">{{ $post->title }}</h2>
+
+    <div class="flex justify-between mb-2 items-center">
+        <h2 class="font-bold text-xl mb-2">{{ $post->title }}</h2>
+
+        @auth
+            @if (auth()->user()->id === $post->user_id)
+                <span class="px-2 py-1 rounded-md text-xs font-semibold
+                    {{ $post->status === 'approved' ? 'bg-green-100 text-green-800' : ($post->status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                    {{ ucfirst($post->status) }}
+                </span>
+            @endif
+            
+        @endauth
+    </div>
+    
 
     <div class="text-sm text-gray-500">
         <span>Posted By</span>

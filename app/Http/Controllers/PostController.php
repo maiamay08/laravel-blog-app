@@ -28,9 +28,9 @@ class PostController extends Controller implements HasMiddleware
     public function index()
     {
         
-
-        $posts = Post::latest()->paginate(10);
+        $posts = Post::where('status', 'approved')->latest()->paginate(10);
         return view('post.home', [ 'posts' => $posts]);
+
     }
 
 
