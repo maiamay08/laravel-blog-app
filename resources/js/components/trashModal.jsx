@@ -47,8 +47,8 @@ const TrashModal = ({ isOpen, onClose, data }) => {
 
     const handleDelete = (id) => {
         triggerConfirm (
-            "Restore?",
-            "This user will be restored.", () => 
+            "Delete?",
+            "This user will be permanently deleted.", () => 
             submitForm(`/admin/users/${id}/force`, 'DELETE'), 'danger'
         );
     }

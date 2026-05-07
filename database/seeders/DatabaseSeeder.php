@@ -14,15 +14,48 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-       User::factory(5)->hasPosts(3)->create();
-
-       User::factory()->create([
+         // Admin user
+        User::create([
             'username' => 'admin',
             'email' => 'admin@email.com',
-            'password' => bcrypt('123123123'),
-            'is_admin' => true, // Assuming you added this column earlier
+            'password' => bcrypt('password'),
+            'is_admin' => true,
+            'email_verified_at' => now(),
         ]);
+
+        // Regular users
+        $users = [
+            'john',
+            'jane',
+            'michael',
+            'sarah',
+            'david',
+            'emily',
+            'daniel',
+            'olivia',
+            'james',
+            'sophia',
+        ];
+
+        foreach ($users as $username) {
+
+            $user = User::create([
+                'username' => ucfirst($username),
+                'email' => $username . '@email.com',
+                'password' => bcrypt('password'),
+                'is_admin' => false,
+                'email_verified_at' => now(),
+            ]);
+
+            // Create 5 blog posts for each user
+            for ($i = 1; $i <= 5; $i++) {
+
+                Post::create([
+                    'user_id' => $user->id,
+                    'title' => ucfirst($username) . "'s Blog Post " . $i,
+                    'body' => "This is the content of blog post {$i} created by {$username}.",
+                ]);
+            }
+        }
     }
 }
